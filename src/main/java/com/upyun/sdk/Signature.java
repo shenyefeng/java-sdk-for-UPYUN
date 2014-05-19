@@ -1,6 +1,11 @@
 package com.upyun.sdk;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.upyun.sdk.utils.DateUtil;
+import com.upyun.sdk.utils.Md5;
 
 public class Signature {
     private String method;
@@ -11,7 +16,7 @@ public class Signature {
     private String password;
     private String operator;
 
-    private String sign;
+    private Map<String, String> headers;
     private Date signDate;
     
     public String getMethod() {
@@ -62,15 +67,32 @@ public class Signature {
         this.space = space;
     }
 
-    public String getSign() {
-        return sign;
-    }
-
     public String getOperator() {
         return operator;
     }
 
     public void setOperator(String operator) {
         this.operator = operator;
+    }
+    
+    public Date getSignDate() {
+        return signDate;
+    }
+
+    public void setSignDate(Date signDate) {
+        this.signDate = signDate;
+    }
+
+    public Map<String, String> getHeaders() {
+        headers = new HashMap<String, String>();
+        headers.put("Authorization", "UpYun " + getSpace() + ":" + generateSign());
+        headers.put("Date", getGmtDate());
+        return headers;
+    }
+
+    private String generateSign() {
+        setSignDate(new Date());
+        setGmtDate(DateUtil.getGMTDate(getSignDate()));
+         return Md5.MD5(getMethod() + "&" + getUri() + "&" + getGmtDate() + "&" + getContentLength() + "&" + Md5.MD5(getPassword()));
     }
 }
