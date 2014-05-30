@@ -1,4 +1,5 @@
-# java-sdk-for-UPYUN 一个简单易用易扩展的Java sdk
+# java-sdk-for-UPYUN 
+#一个使用Apache HttpClient的简单易用易扩展的Java SDK
 ---
 
 基于 [又拍云存储HTTP REST API接口](http://wiki.upyun.com/index.php?title=HTTP_REST_API接口) 开发，适用于Java 6及以上版本。
