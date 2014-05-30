@@ -93,10 +93,10 @@ public class UpYunClient {
         }
     }
     
-    public void deleteFile(String fileName) throws UpYunExcetion {
+    public void delete(String fileNameOrDirectory) throws UpYunExcetion {
         try {
             StringBuffer url = new StringBuffer();
-            for (String str : fileName.split("/")) {
+            for (String str : fileNameOrDirectory.split("/")) {
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             url = url.delete(url.length() - 1, url.length());

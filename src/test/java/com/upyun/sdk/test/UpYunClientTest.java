@@ -142,9 +142,9 @@ public class UpYunClientTest {
     }
 
     @Test
-    public void testDeleteFile() {
+    public void testDelete() {
         try {
-            client.deleteFile("ssh_hd.zip");
+            client.delete("测试");
             
             List<FileVo> list = client.listFile();
             for (FileVo vo : list) {
