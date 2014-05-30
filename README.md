@@ -1,5 +1,5 @@
 # java-sdk-for-UPYUN 
-#一个使用Apache HttpClient的简单易用易扩展的Java SDK
+##一个使用Apache HttpClient的简单易用易扩展的Java SDK
 ---
 
 基于 [又拍云存储HTTP REST API接口](http://wiki.upyun.com/index.php?title=HTTP_REST_API接口) 开发，适用于Java 6及以上版本。
@@ -54,7 +54,20 @@
 
     client.delete("cs-4-3-management-nfs.txt");
     
+<a name="获取目录文件列表"></a>
+### 获取目录文件列表
 
+            List<FileVo> list = client.listFile();
+            for (FileVo vo : list) {
+                System.out.print(vo.getName() + " ");
+                System.out.print(vo.getIsFile() + " ");
+                System.out.print(vo.getSize() + " ");
+                System.out.println(vo.getUpdatedAt());
+            }
+
+##SDK支持上传下载带中文的文件
+
+##由于时间有限，目前只开发了几个接口，但是基础工作都已经完成，扩展还是非常方便的。
 
 
         
