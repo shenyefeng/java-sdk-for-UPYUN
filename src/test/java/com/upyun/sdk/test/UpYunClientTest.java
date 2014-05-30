@@ -73,6 +73,7 @@ public class UpYunClientTest {
     public void testUploadFile2() {
         File file = new File("e:/upyuntest/cs-4-3-management-nfs.txt");
         FileInputStream fis = null;
+        System.out.println(file.getName());
         try {
             fis = new FileInputStream(file);
             client.uploadFile("test22.log", fis, fis.available());
@@ -115,7 +116,24 @@ public class UpYunClientTest {
             }
         }
     }
-
+    
+    @Test
+    public void testUploadFile4() {
+        String str = "e:/upyuntest/cs-4-3-management-nfs.txt";
+        try {
+            client.uploadFile(str);
+            List<FileVo> list = client.listFile();
+            for (FileVo vo : list) {
+                System.out.print(vo.getName() + " ");
+                System.out.print(vo.getIsFile() + " ");
+                System.out.print(vo.getSize() + " ");
+                System.out.println(vo.getUpdatedAt());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Test
     public void testListFile() {
         try {

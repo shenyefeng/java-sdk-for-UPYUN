@@ -1,6 +1,9 @@
 package com.upyun.sdk;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +41,30 @@ public class UpYunClient {
 
     public static UpYunClient newClient(String space, String operator, String password) {
         return new UpYunClient(space, operator, password);
+    }
+
+    public void uploadFile(String file) throws UpYunExcetion {
+        uploadFile(new File(file));
+    }
+    
+    public void uploadFile(File file) throws UpYunExcetion {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            uploadFile(file.getName(), fis, fis.available());
+        } catch (FileNotFoundException e) {
+            LogUtil.exception(logger, e);
+        } catch (IOException e) {
+            LogUtil.exception(logger, e);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    LogUtil.exception(logger, e);
+                }
+            }
+        }
     }
 
     public void uploadFile(String fileName, FileInputStream instream, Integer fileLength) throws UpYunExcetion {
@@ -92,7 +119,7 @@ public class UpYunClient {
             LogUtil.exception(logger, e);
         }
     }
-    
+
     public void delete(String fileNameOrDirectory) throws UpYunExcetion {
         try {
             StringBuffer url = new StringBuffer();
@@ -114,7 +141,7 @@ public class UpYunClient {
             throw new UpYunExcetion(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
         }
     }
-    
+
     public List<FileVo> listFile() throws UpYunExcetion {
         sign.setUri("");
         sign.setContentLength(0);
