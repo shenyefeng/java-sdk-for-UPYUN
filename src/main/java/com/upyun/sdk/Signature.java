@@ -17,7 +17,7 @@ public class Signature {
     private String operator;
 
     private Map<String, String> headers;
-    private Date signDate;
+    private Map<String, Sign> signMap = new HashMap<String, Signature.Sign>();
     
     public String getMethod() {
         return method;
@@ -32,7 +32,7 @@ public class Signature {
     }
 
     public void setUri(String uri) {
-        this.uri = uri;
+        this.uri = "/" + space + "/" + uri;
     }
 
     public String getGmtDate() {
@@ -74,25 +74,41 @@ public class Signature {
     public void setOperator(String operator) {
         this.operator = operator;
     }
-    
-    public Date getSignDate() {
-        return signDate;
-    }
 
-    public void setSignDate(Date signDate) {
-        this.signDate = signDate;
+    public String getSign() {
+        Sign sign;
+        String signStr;
+        if(!signMap.containsKey(uri) 
+                || signMap.get(uri).signDate == null 
+                || new Date().getTime() - signMap.get(uri).signDate.getTime() > 30 * 60 * 1000
+                || !method.equals(signMap.get(uri).method)
+                || contentLength != signMap.get(uri).contentLength) {
+            sign = new Sign();
+            sign.signDate = new Date();
+            sign.method = method;
+            sign.contentLength = contentLength;
+            setGmtDate(DateUtil.getGMTDate(sign.signDate));
+            sign.sign = Md5.MD5(method + "&" + uri + "&" + gmtDate + "&" + contentLength + "&" + Md5.MD5(password));
+            signMap.put(uri, sign);
+            signStr = sign.sign;
+        } else {
+            sign = signMap.get(uri);
+            signStr = sign.sign;
+        }
+        return signStr;
     }
 
     public Map<String, String> getHeaders() {
         headers = new HashMap<String, String>();
-        headers.put("Authorization", "UpYun " + getSpace() + ":" + generateSign());
-        headers.put("Date", getGmtDate());
+        headers.put("Authorization", "UpYun " + space + ":" + getSign());
+        headers.put("Date", gmtDate);
         return headers;
     }
-
-    private String generateSign() {
-        setSignDate(new Date());
-        setGmtDate(DateUtil.getGMTDate(getSignDate()));
-         return Md5.MD5(getMethod() + "&" + getUri() + "&" + getGmtDate() + "&" + getContentLength() + "&" + Md5.MD5(getPassword()));
+    
+    private class Sign {
+        private Date signDate;
+        private String sign;
+        private String method;
+        private int contentLength;
     }
 }
