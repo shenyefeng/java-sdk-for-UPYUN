@@ -160,9 +160,9 @@ public class UpYunClientTest {
     }
 
     @Test
-    public void testDeleteDir() {
+    public void testDeleteFolder() {
         try {
-            client.deleteDir("testdir");
+            client.deleteFolder("testdir");
             
             List<FileVo> list = client.listFile();
             for (FileVo vo : list) {
@@ -203,13 +203,25 @@ public class UpYunClientTest {
     }
     
     @Test
-    public void testCreateDir() {
+    public void testCreateFolder() {
         try {
-            client.createDir("/testdir/subdir/");
+            client.createFolder("/testdir/subdir/");
         } catch (UpYunExcetion e) {
             e.printStackTrace();
         }
     }
-
     
+    
+    @Test
+    public void testListFileInfo() {
+        try {
+            FileVo fileVo = client.listFileInfo("cs-4-3-management-nfs.txt");
+            System.out.print(fileVo.getType() + " ");
+            System.out.print(fileVo.getSize() + " ");
+            System.out.println(fileVo.getCreatedAt() + " ");
+        } catch (UpYunExcetion e) {
+            e.printStackTrace();
+        }
+    }
+ 
 }

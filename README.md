@@ -12,6 +12,7 @@
   * [删除文件](#删除文件)
   * [创建目录](#创建目录)
   * [删除目录](#删除目录)
+  * [获取文件信息](#获取文件信息)
   * [获取目录文件列表](#获取目录文件列表)
   * [获取使用量情况](#获取使用量情况)
 
@@ -59,12 +60,12 @@
 <a name="创建目录"></a>
 ### 创建目录
 
-    client.createDir("testdir");
+    client.createFolder("testfolder");
     
 <a name="删除目录"></a>
 ### 删除目录
 
-    client.deleteDir("testdir");
+    client.deleteFolder("testfolder");
     
 <a name="获取目录文件列表"></a>
 ### 获取目录文件列表
@@ -77,15 +78,24 @@
         System.out.println(vo.getUpdatedAt());
     }
     
+<a name="获取文件信息"></a>
+### 获取文件信息
+
+    FileVo fileVo = client.listFileInfo("cs-4-3-management-nfs.txt");
+    System.out.print(fileVo.getType() + " ");
+    System.out.print(fileVo.getSize() + " ");
+    System.out.println(fileVo.getCreatedAt() + " ");
+
 <a name="获取使用量情况"></a>
 ### 获取使用量情况
 
 	//返回使用的字节数
     client.usage();
 
-##SDK支持上传下载带中文的文件
+###SDK支持上传下载带中文的文件
 
-##由于时间有限，目前只开发了几个接口，但是基础工作都已经完成，扩展还是非常方便的。
+###由于时间有限，目前只开发了文件相关接口，图片处理接口未开发，但是基础工作都已经完成，扩展还是非常方便的。
 
+###所有接口都是经过Junit测试过的，详细请查看UpYunClientTest.java
 
         

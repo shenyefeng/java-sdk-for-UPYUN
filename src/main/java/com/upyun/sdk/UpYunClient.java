@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -46,7 +47,7 @@ public class UpYunClient {
     public void uploadFile(String file) throws UpYunExcetion {
         uploadFile(new File(file));
     }
-    
+
     public void uploadFile(File file) throws UpYunExcetion {
         FileInputStream fis = null;
         try {
@@ -71,9 +72,9 @@ public class UpYunClient {
         try {
             StringBuffer url = new StringBuffer();
             for (String str : fileName.split("/")) {
-            	if(str == null || str.length() == 0) {
-            		continue;
-            	}
+                if (str == null || str.length() == 0) {
+                    continue;
+                }
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             url = url.delete(url.length() - 1, url.length());
@@ -97,9 +98,9 @@ public class UpYunClient {
         try {
             StringBuffer url = new StringBuffer();
             for (String str : fileName.split("/")) {
-            	if(str == null || str.length() == 0) {
-            		continue;
-            	}
+                if (str == null || str.length() == 0) {
+                    continue;
+                }
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             url = url.delete(url.length() - 1, url.length());
@@ -126,13 +127,13 @@ public class UpYunClient {
         }
     }
 
-    public void createDir(String dirName) throws UpYunExcetion {
+    public void createFolder(String folderName) throws UpYunExcetion {
         try {
             StringBuffer url = new StringBuffer();
-            for (String str : dirName.split("/")) {
-            	if(str == null || str.length() == 0) {
-            		continue;
-            	}
+            for (String str : folderName.split("/")) {
+                if (str == null || str.length() == 0) {
+                    continue;
+                }
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             sign.setUri(url.toString());
@@ -151,26 +152,26 @@ public class UpYunClient {
             throw new UpYunExcetion(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
         }
     }
-    
-    public void deleteDir(String dirName) throws UpYunExcetion {
-    	delete(dirName, false);
+
+    public void deleteFolder(String folderName) throws UpYunExcetion {
+        delete(folderName, false);
     }
-    
+
     public void deleteFile(String fileName) throws UpYunExcetion {
-    	delete(fileName, true);
+        delete(fileName, true);
     }
-    
+
     public void delete(String name, Boolean flag) throws UpYunExcetion {
         try {
             StringBuffer url = new StringBuffer();
             for (String str : name.split("/")) {
-            	if(str == null || str.length() == 0) {
-            		continue;
-            	}
+                if (str == null || str.length() == 0) {
+                    continue;
+                }
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
-            if(flag) {
-            	url = url.delete(url.length() - 1, url.length());
+            if (flag) {
+                url = url.delete(url.length() - 1, url.length());
             }
             sign.setUri(url.toString());
         } catch (UnsupportedEncodingException e) {
@@ -222,6 +223,45 @@ public class UpYunClient {
 
         return fileVoList;
     }
+
+    public FileVo listFileInfo(String fileName) throws UpYunExcetion {
+        try {
+            StringBuffer url = new StringBuffer();
+            for (String str : fileName.split("/")) {
+                if (str == null || str.length() == 0) {
+                    continue;
+                }
+                url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
+            }
+            url = url.delete(url.length() - 1, url.length());
+            sign.setUri(url.toString());
+        } catch (UnsupportedEncodingException e) {
+            LogUtil.exception(logger, e);
+        }
+        sign.setContentLength(0);
+        sign.setMethod(HttpMethodEnum.HEAD.name());
+        String url = autoUrl + sign.getUri();
+        Map<String, String> headers = sign.getHeaders();
+
+        HttpResponse httpResponse = HttpClientUtils.headByHttp(url, headers);
+        FileVo fileVo = null;
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            throw new UpYunExcetion(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
+        } else {
+            fileVo = new FileVo();
+            for (Header header : httpResponse.getAllHeaders()) {
+                if("x-upyun-file-type".equals(header.getName())) {
+                    fileVo.setType(header.getValue());
+                } else if("x-upyun-file-size".equals(header.getName())) {
+                    fileVo.setSize(Long.valueOf(header.getValue()));
+                } else if("x-upyun-file-date".equals(header.getName())) {
+                    fileVo.setCreatedAt(new Date(Long.valueOf(header.getValue()) * 1000));
+                }
+            }
+        }
+        return fileVo;
+    }
+
     public Long usage() throws UpYunExcetion {
         sign.setUri("?usage");
         sign.setContentLength(0);

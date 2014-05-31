@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
@@ -70,6 +71,12 @@ public class HttpClientUtils {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
         return post(url, httpclient, header);
+    }
+
+    public static HttpResponse headByHttp(String url, Map<String, String> header) {
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+
+        return head(url, httpclient, header);
     }
     
     public static HttpResponse getByHttp(String url, Map<String, String> headers) {
@@ -175,6 +182,27 @@ public class HttpClientUtils {
         
         try {
             response = httpclient.execute(httpPut);
+        } catch (Exception e) {
+            LogUtil.exception(logger, e);
+        }
+
+        return response;
+    }
+
+    private static HttpResponse head(String url, HttpClient httpclient, Map<String, String> headers) {
+        HttpHead httpHead = new HttpHead(url);
+        HttpResponse response = null;
+        if(headers != null) {
+            for(String key : headers.keySet()) {
+            	httpHead.addHeader(key, headers.get(key));
+            }
+        }
+        
+        httpclient.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, CONNECTION_TIMEOUT);// 连接超时
+        httpclient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, SO_TIMEOUT); // 读取超时
+        
+        try {
+            response = httpclient.execute(httpHead);
         } catch (Exception e) {
             LogUtil.exception(logger, e);
         }

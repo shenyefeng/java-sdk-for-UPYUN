@@ -8,6 +8,9 @@ public class FileVo {
     private Long size;
     private Date updatedAt;
 
+    private String type;
+    private Date createdAt;
+    
     public String getName() {
         return name;
     }
@@ -39,5 +42,21 @@ public class FileVo {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
 }
