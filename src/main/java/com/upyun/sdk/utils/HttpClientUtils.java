@@ -9,10 +9,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,15 +20,12 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.log4j.Logger;
 
 public class HttpClientUtils {
     private static final Logger logger = Logger.getLogger(HttpClientUtils.class);
-    private static final String APPLICATION_JSON = "application/json";
     private static int CONNECTION_TIMEOUT = 60000;
     private static int SO_TIMEOUT = 0;
     
@@ -64,32 +59,17 @@ public class HttpClientUtils {
         client = new DefaultHttpClient(ccm, client.getParams());
         return client;
     }
-    
-    public static String postByHttp(String url, String inputParam) {
-    	return postByHttp(url, inputParam, APPLICATION_JSON);
-    }
-    
-    public static String postByHttp(String url, String inputParam, String contentType) {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
 
-        return post(url, inputParam, contentType, httpclient, null);
-    }
     
     public static HttpResponse putByHttp(String url, Map<String, String> headers, InputStream instream, Integer length) {
         DefaultHttpClient httpclient = new DefaultHttpClient();
         return put(url, httpclient, headers, instream, length);
     }
 
-    public static String postByHttp(String url, String inputParam, Header header, String contentType) {
+    public static HttpResponse postByHttp(String url, Map<String, String> header) {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
-        return post(url, inputParam, contentType, httpclient, header);
-    }
-    
-    public static String postByHttps(String url, String inputParam, String contentType) {
-        DefaultHttpClient httpclient = (DefaultHttpClient)getInstance();
-        
-        return post(url, inputParam, contentType, httpclient, null);
+        return post(url, httpclient, header);
     }
     
     public static HttpResponse getByHttp(String url, Map<String, String> headers) {
@@ -106,28 +86,24 @@ public class HttpClientUtils {
         return delete(url, httpclient, headers);
     }
 
-    private static String post(String url, String inputParam, String contentType, HttpClient httpclient, Header header) {
+    private static HttpResponse post(String url, HttpClient httpclient, Map<String, String> headers) {
         
-        String restr = null;
+    	HttpResponse response = null;
         
         try {
-            StringEntity reqEntity = new StringEntity(inputParam);
-            reqEntity.setContentType(contentType);
             httpclient.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, CONNECTION_TIMEOUT);// 连接超时
             httpclient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, SO_TIMEOUT); // 读取超时
 
             HttpPost httpPost = new HttpPost(url);
-            httpPost.setEntity(reqEntity);
-            if(header != null) {
-            	httpPost.addHeader(header);
+            for(String key : headers.keySet()) {
+            	httpPost.addHeader(key, headers.get(key));
             }
-            ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            restr = httpclient.execute(httpPost, responseHandler);
+            response = httpclient.execute(httpPost);
         } catch (Exception e) {
             LogUtil.exception(logger, e);
         }
         
-        return restr;
+        return response;
     }
 
     private static HttpResponse get(String url, String inputParam, HttpClient httpclient, Map<String, String> headers) {

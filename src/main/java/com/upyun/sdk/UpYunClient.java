@@ -71,6 +71,9 @@ public class UpYunClient {
         try {
             StringBuffer url = new StringBuffer();
             for (String str : fileName.split("/")) {
+            	if(str == null || str.length() == 0) {
+            		continue;
+            	}
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             url = url.delete(url.length() - 1, url.length());
@@ -94,6 +97,9 @@ public class UpYunClient {
         try {
             StringBuffer url = new StringBuffer();
             for (String str : fileName.split("/")) {
+            	if(str == null || str.length() == 0) {
+            		continue;
+            	}
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
             url = url.delete(url.length() - 1, url.length());
@@ -120,13 +126,52 @@ public class UpYunClient {
         }
     }
 
-    public void delete(String fileNameOrDirectory) throws UpYunExcetion {
+    public void createDir(String dirName) throws UpYunExcetion {
         try {
             StringBuffer url = new StringBuffer();
-            for (String str : fileNameOrDirectory.split("/")) {
+            for (String str : dirName.split("/")) {
+            	if(str == null || str.length() == 0) {
+            		continue;
+            	}
                 url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
             }
-            url = url.delete(url.length() - 1, url.length());
+            sign.setUri(url.toString());
+        } catch (UnsupportedEncodingException e) {
+            LogUtil.exception(logger, e);
+        }
+        sign.setContentLength(0);
+        sign.setMethod(HttpMethodEnum.POST.name());
+        String url = autoUrl + sign.getUri();
+        Map<String, String> headers = sign.getHeaders();
+        headers.put("folder", "true");
+        headers.put("mkdir", "true");
+
+        HttpResponse httpResponse = HttpClientUtils.postByHttp(url, headers);
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            throw new UpYunExcetion(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
+        }
+    }
+    
+    public void deleteDir(String dirName) throws UpYunExcetion {
+    	delete(dirName, false);
+    }
+    
+    public void deleteFile(String fileName) throws UpYunExcetion {
+    	delete(fileName, true);
+    }
+    
+    public void delete(String name, Boolean flag) throws UpYunExcetion {
+        try {
+            StringBuffer url = new StringBuffer();
+            for (String str : name.split("/")) {
+            	if(str == null || str.length() == 0) {
+            		continue;
+            	}
+                url.append(UrlCodingUtil.encodeBase64(str.getBytes("utf-8")) + "/");
+            }
+            if(flag) {
+            	url = url.delete(url.length() - 1, url.length());
+            }
             sign.setUri(url.toString());
         } catch (UnsupportedEncodingException e) {
             LogUtil.exception(logger, e);

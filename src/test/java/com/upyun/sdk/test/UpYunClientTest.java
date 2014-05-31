@@ -160,9 +160,9 @@ public class UpYunClientTest {
     }
 
     @Test
-    public void testDelete() {
+    public void testDeleteDir() {
         try {
-            client.delete("ssh_hd.zip");
+            client.deleteDir("testdir");
             
             List<FileVo> list = client.listFile();
             for (FileVo vo : list) {
@@ -175,6 +175,24 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testDeleteFile() {
+        try {
+            client.deleteFile("test22.log");
+            
+            List<FileVo> list = client.listFile();
+            for (FileVo vo : list) {
+                System.out.print(vo.getName() + " ");
+                System.out.print(vo.getIsFile() + " ");
+                System.out.print(vo.getSize() + " ");
+                System.out.println(vo.getUpdatedAt());
+            }
+        } catch (UpYunExcetion e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Test
     public void testUsage() {
         try {
@@ -183,4 +201,15 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
+    
+    @Test
+    public void testCreateDir() {
+        try {
+            client.createDir("/testdir/subdir/");
+        } catch (UpYunExcetion e) {
+            e.printStackTrace();
+        }
+    }
+
+    
 }

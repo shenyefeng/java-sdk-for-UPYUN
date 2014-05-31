@@ -10,6 +10,8 @@
   * [上传文件](#上传文件)
   * [下载文件](#下载文件)
   * [删除文件](#删除文件)
+  * [创建目录](#创建目录)
+  * [删除目录](#删除目录)
   * [获取目录文件列表](#获取目录文件列表)
   * [获取使用量情况](#获取使用量情况)
 
@@ -52,7 +54,17 @@
 <a name="删除文件"></a>
 ### 删除文件
 
-    client.delete("cs-4-3-management-nfs.txt");
+    client.deleteFile("cs-4-3-management-nfs.txt");
+    
+<a name="创建目录"></a>
+### 创建目录
+
+    client.createDir("testdir");
+    
+<a name="删除目录"></a>
+### 删除目录
+
+    client.deleteDir("testdir");
     
 <a name="获取目录文件列表"></a>
 ### 获取目录文件列表
