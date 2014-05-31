@@ -57,13 +57,19 @@
 <a name="获取目录文件列表"></a>
 ### 获取目录文件列表
 
-            List<FileVo> list = client.listFile();
-            for (FileVo vo : list) {
-                System.out.print(vo.getName() + " ");
-                System.out.print(vo.getIsFile() + " ");
-                System.out.print(vo.getSize() + " ");
-                System.out.println(vo.getUpdatedAt());
-            }
+    List<FileVo> list = client.listFile();
+    for (FileVo vo : list) {
+        System.out.print(vo.getName() + " ");
+        System.out.print(vo.getIsFile() + " ");
+        System.out.print(vo.getSize() + " ");
+        System.out.println(vo.getUpdatedAt());
+    }
+    
+<a name="获取使用量情况"></a>
+### 获取使用量情况
+
+	//返回使用的字节数
+    client.usage();
 
 ##SDK支持上传下载带中文的文件
 

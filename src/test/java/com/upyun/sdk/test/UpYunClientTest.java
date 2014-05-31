@@ -175,4 +175,12 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void testUsage() {
+        try {
+            System.out.println(client.usage());
+        } catch (UpYunExcetion e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -177,4 +177,25 @@ public class UpYunClient {
 
         return fileVoList;
     }
+    public Long usage() throws UpYunExcetion {
+        sign.setUri("?usage");
+        sign.setContentLength(0);
+        sign.setMethod(HttpMethodEnum.GET.name());
+        String url = autoUrl + sign.getUri();
+        Map<String, String> headers = sign.getHeaders();
+
+        HttpResponse httpResponse = HttpClientUtils.getByHttp(url, headers);
+        String resultStr = null;
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            throw new UpYunExcetion(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
+        } else {
+            try {
+                resultStr = EntityUtils.toString(httpResponse.getEntity());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return Long.valueOf(resultStr);
+    }
 }
