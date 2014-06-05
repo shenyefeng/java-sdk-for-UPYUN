@@ -1,3 +1,19 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 package com.upyun.sdk.test;
 
 import java.io.File;
@@ -15,6 +31,11 @@ import com.upyun.sdk.UpYunClient;
 import com.upyun.sdk.exception.UpYunExcetion;
 import com.upyun.sdk.vo.FileVo;
 
+/**
+ * 
+ * @author Yefeng shen<shenyefeng@gmail.com>
+ * 
+ */
 public class UpYunClientTest {
 
     @BeforeClass
@@ -73,7 +94,7 @@ public class UpYunClientTest {
     public void testUploadFile2() {
         File file = new File("c:/upyuntest/upyun-test.txt");
         FileInputStream fis = null;
-        
+
         try {
             fis = new FileInputStream(file);
             client.uploadFile("folder1/test22.log", fis, fis.available());
@@ -116,7 +137,7 @@ public class UpYunClientTest {
             }
         }
     }
-    
+
     @Test
     public void testUploadFile4() {
         String str = "e:/upyuntest/cs-4-3-management-nfs.txt";
@@ -133,7 +154,7 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testListFile() {
         try {
@@ -152,7 +173,7 @@ public class UpYunClientTest {
     @Test
     public void testDownloadFile() {
         try {
-//            client.downloadFile("d:/upyuntest/", "test.log");
+            // client.downloadFile("d:/upyuntest/", "test.log");
             client.downloadFile("d:/upyuntest/", "/ssh_hd.zip");
         } catch (UpYunExcetion e) {
             e.printStackTrace();
@@ -163,7 +184,7 @@ public class UpYunClientTest {
     public void testDeleteFolder() {
         try {
             client.deleteFolder("testdir");
-            
+
             List<FileVo> list = client.listFile();
             for (FileVo vo : list) {
                 System.out.print(vo.getName() + " ");
@@ -180,7 +201,7 @@ public class UpYunClientTest {
     public void testDeleteFile() {
         try {
             client.deleteFile("test22.log");
-            
+
             List<FileVo> list = client.listFile();
             for (FileVo vo : list) {
                 System.out.print(vo.getName() + " ");
@@ -192,7 +213,7 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testUsage() {
         try {
@@ -201,7 +222,7 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testCreateFolder() {
         try {
@@ -210,12 +231,11 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
-    
-    
+
     @Test
     public void testListFileInfo() {
         try {
-            FileVo fileVo = client.listFileInfo("folder1");
+            FileVo fileVo = client.listFileInfo("folder1/test22.log");
             System.out.print(fileVo.getType() + " ");
             System.out.print(fileVo.getSize() + " ");
             System.out.println(fileVo.getCreatedAt() + " ");
@@ -223,5 +243,5 @@ public class UpYunClientTest {
             e.printStackTrace();
         }
     }
- 
+
 }
